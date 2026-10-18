@@ -1,0 +1,63 @@
+screen:
+  resolution: [1920, 1080]
+  force_monitor: true
+  monitor_index: 1
+  window_titles:
+    - "Grand Theft Auto V"
+    - "GTA5"
+    - "Majestic"
+  process_names:
+    - "GTA5"
+    - "PlayGTAV"
+    - "RAGEMP"
+
+regions:
+  # Область синего предупреждения со стаканом.
+  thirst_warning: [250, 785, 190, 180]
+  # Заголовок нужен, чтобы учесть наличие/отсутствие рамки окна GTA.
+  inventory_header_search: [1040, 25, 520, 125]
+  inventory_header_anchor: [1165, 72, 110, 34]
+  inventory_items: [1150, 105, 350, 555]
+
+templates:
+  thirst_warning: "config/templates/sustenance/thirst_warning.png"
+  inventory_header: "config/templates/sustenance/inventory_header.png"
+  # Бот нажимает только предметы из этих списков. Добавляйте сюда шаблоны
+  # напитков/еды, которые действительно лежат в инвентаре персонажа.
+  water:
+    - "config/templates/sustenance/water_cola.png"
+  food:
+    - "config/templates/sustenance/food_bar.png"
+
+sustenance:
+  inventory_key: i
+  # Итоговый score = max(совпадение шаблона, синяя плитка + белый значок).
+  # Цветовая проверка не зависит от дневного/ночного фона вокруг HUD.
+  thirst_match_threshold: 0.78
+  hunger_tile_score_threshold: 0.72
+  inventory_match_threshold: 0.78
+  item_match_threshold: 0.72
+  # Проверяется только основной экран. Инвентарь без предупреждения не открывается.
+  hud_check_interval_sec: 60
+  water_enabled: true
+  food_enabled: true
+  action_cooldown_sec: 20
+  failed_retry_sec: 8
+  # GTA может принять I с задержкой после выхода из активности. Каждая
+  # попытка подтверждается по заголовку инвентаря, слепого переключения нет.
+  inventory_open_wait_sec: 1.50
+  inventory_open_attempts: 3
+  inventory_open_poll_sec: 0.15
+  inventory_open_retry_sec: 0.35
+  after_item_wait_sec: 0.70
+  inventory_close_wait_sec: 0.35
+  double_click_interval_sec: 0.12
+
+hotkeys:
+  toggle: f9
+  check_now: f8
+  stop: f10
+
+debug:
+  enabled: true
+  save_inventory_frame: true

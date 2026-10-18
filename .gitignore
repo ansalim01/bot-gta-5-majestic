@@ -1,0 +1,34 @@
+.venv/
+.dev-tools/
+.review-baseline/
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+# Local credentials and publication artifacts must stay off GitHub.
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.log
+public-export/
+# Local session analysis, kept outside the application source.
+tools/_bj_decision_audit.py
+tmp*/
+__pycache__/
+*.py[cod]
+logs/
+*.png
+!config/templates/
+!config/templates/**/*
+!tests/fixtures/notifications/*.png
+!docs/images/*.png
+# Full gameplay captures are private references, not detector templates.
+# Files already tracked in old commits still require a clean publication copy.
+config/templates/navigation/
+config/templates/reference_*.png
+config/templates/user_*.png
+config/user/*
+!config/user/.gitkeep

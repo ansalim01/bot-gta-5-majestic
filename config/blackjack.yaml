@@ -1,0 +1,81 @@
+screen:
+  resolution: [1920, 1080]
+  force_monitor: true
+  monitor_index: 1
+  window_titles: ["Grand Theft Auto V", "GTA5", "Majestic"]
+  process_names: ["GTA5", "PlayGTAV", "RAGEMP"]
+  require_foreground_for_input: true
+  auto_focus_game_for_input: true
+  focus_retry_sec: 0.75
+
+regions:
+  # Центральная строка «У вас [..], у дилера [..]».
+  score: [760, 735, 430, 110]
+  # Нижняя панель «Ещё / Достаточно / Дабл» — отличает ход от результата.
+  action_prompt: [1575, 1015, 345, 65]
+  # Верхняя строка панели «РАЗМЕР СТАВКИ».
+  bet_panel: [1640, 935, 270, 48]
+  # Число справа в строке «ЭТА СТАВКА» (0 до подтверждения, >0 после).
+  bet_value: [1810, 978, 90, 48]
+  # Нижнее уведомление о результате (например, «Вы выиграли 25 фишек!»).
+  # Нужно для учёта натурального blackjack 3:2, где строка сумм исчезает сразу.
+  result_notice: [740, 980, 450, 85]
+  # Стол, карты и интерфейс; захватывается только в ключевые моменты для анализа.
+  blackjack_debug: [620, 340, 1300, 740]
+
+blackjack:
+  # false = только подсказка в консоли; true = нажимать клавишу автоматически.
+  auto_action: true
+  auto_bet: true
+  # Должен совпадать с суммой, заранее выбранной стрелками на игровом столе.
+  # Используется для отчёта; сам бот подтверждает текущую ставку Enter.
+  bet_amount: 10
+  # conservative = только твёрдые 10–11; basic = полная effective-48 max-EV таблица; never = без даблов.
+  double_policy: basic
+  # После сплита Majestic сначала разыгрывает вторую сумму в строке, затем первую.
+  split_enabled: true
+  bet_key: enter
+  bet_confirm_frames: 3
+  min_bet_bright_pixels: 90
+  # Белая кнопка еды даёт около 3500 пикселей и не является панелью ставки.
+  max_bet_bright_pixels: 2500
+  min_bet_ocr_confidence: 0.58
+  bet_retry_sec: 2.0
+  # Не допускает бесконечных Enter, если игра не приняла ставку.
+  max_bet_retries: 2
+  hit_key: enter
+  stand_key: space
+  double_key: tab
+  split_key: f
+  confirm_frames: 3
+  min_ocr_confidence: 0.64
+  min_action_bright_pixels: 80
+  action_cooldown_sec: 1.0
+  # Если панель хода и сумма не изменились, игра могла пропустить клавишу.
+  # Повторяем её ограниченное число раз, не дублируя решение в статистике.
+  action_retry_sec: 1.25
+  max_action_retries: 2
+  # Сброс защиты от повторного хода только после устойчивого исчезновения раунда.
+  round_reset_sec: 3.0
+  risk:
+    # Базовая ставка остаётся минимальной — 10. Дабл разрешён только стратегией.
+    # Новые ставки прекращаются при достижении любого лимита; потолка прибыли нет.
+    max_session_loss: 0
+    max_drawdown_from_peak: 0
+    max_hands_per_session: 0
+
+hotkeys:
+  toggle: f9
+  stop: f10
+
+debug:
+  save_live_crop: true
+  live_crop: logs/blackjack_live.png
+  # Ключевые кадры каждой раздачи: решение и итог. Нужны для проверки OCR.
+  save_event_screenshots: true
+  screenshot_directory: logs/debug/blackjack_screenshots
+  max_event_screenshots: 200
+
+telemetry:
+  enabled: true
+  directory: logs/blackjack_sessions

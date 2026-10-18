@@ -1,0 +1,272 @@
+screen:
+  resolution: [1920, 1080]
+  window_titles:
+    - "Grand Theft Auto V"
+    - "GTA5"
+    - "Majestic"
+  # GTA can expose an empty window title; process matching is then required.
+  # Exact process matches take priority over Majestic Launcher windows.
+  process_names:
+    - "GTA5"
+    - "PlayGTAV"
+    - "RAGEMP"
+  # Не отправлять глобальные клавиши, пока активное окно не принадлежит GTA.
+  require_foreground_for_input: true
+
+regions:
+  notification: [20, 20, 400, 120]
+  # «Нажмите E чтобы начать ловить рыбу» — верхний левый угол.
+  fishing_start_prompt: [0, 0, 400, 90]
+  # Панель выбранного снаряжения и «Начать рыбалку E» — справа снизу.
+  fishing_equipment_prompt: [1500, 990, 420, 90]
+  # Полоса тайминга (чуть выше и выше — для не-1080 окон)
+  timing_bar: [660, 860, 600, 75]
+  fight_bar: [660, 860, 600, 75]
+  # «Клюет!» — центральная полоса над хотбаром (откалибровано по реальному скрину,
+  # с запасом по краям — шаблон уже текста, matchTemplate сам найдёт его внутри ROI)
+  bite_text: [645, 980, 650, 95]
+  # Поплавок с брызгами — справа (откалибровано по реальному скрину)
+  bobber_widget: [1280, 745, 380, 300]
+  # Текст «Дождитесь…» (опционально)
+  fishing_prompt: [306, 871, 1308, 52]
+  # «Подсечь рыбу [Enter]» — справа внизу (откалибровано по реальному скрину)
+  hook_prompt: [1730, 1025, 190, 55]
+  # Кадр 4-5: иконка рыбы на воде (двигается влево/вправо)
+  fish_icon: [860, 360, 200, 180]
+  # Жёлтый индикатор на нижней полосе при вываживании
+  # Кадр 6: окно «ВЫ ПОЙМАЛИ РЫБУ» (откалибровано по реальному скрину catch-modal)
+  catch_modal: [700, 290, 520, 420]
+  # Кнопка «Забрать себе» — измерено по реальному скрину (левая кнопка под полосой уровня)
+  keep_button: [776, 703, 178, 45]
+  minimap: [0, 780, 300, 300]
+
+fishing:
+  # Перед первым забросом: E на приглашении, затем E на экране снаряжения.
+  auto_start_activity: true
+  setup_key: e
+  setup_after_start_press_ms: 2000
+  setup_after_equipment_press_ms: 2000
+  setup_start_timeout_sec: 30
+  setup_equipment_timeout_sec: 20
+  # Если приглашение E не появилось: сделать только одну пару S -> W.
+  # После этого персонаж больше не двигается и через timeout бот встанет
+  # на паузу, чтобы не уйти с точки рыбалки.
+  setup_prompt_search_delay_sec: 1.0
+  setup_prompt_first_step: s
+  setup_prompt_step_hold_ms: 500
+  setup_prompt_step_wait_sec: 1.0
+  setup_prompt_cycle_pause_sec: 2.0
+  setup_prompt_max_steps: 2
+  # Перед каждым новым забросом проверить HUD. При голоде/жажде:
+  # ESC -> открыть инвентарь -> поесть/попить -> E -> выбор снаряжения -> E.
+  sustenance_enabled: true
+  sustenance_exit_key: esc
+  # После улова панель снаряжения закрывается не сразу. Повторяем Esc и
+  # подтверждаем исчезновение «Начать рыбалку» до открытия инвентаря.
+  sustenance_exit_settle_ms: 2000
+  sustenance_exit_attempts: 3
+  sustenance_failure_retry_ms: 1000
+  # После нескольких неудач не возвращаться к рыбалке голодным/с жаждой и
+  # не запускать поиск точки через S/W. Безопасная пауза сохраняет потребность;
+  # после пополнения инвентаря F9 запускает новую серию попыток.
+  sustenance_max_failures: 3
+  sustenance_after_action_ms: 700
+  # 0 = ловить без ограничения. Иначе бот остановится после указанного улова.
+  target_fish_count: 0
+  # Full automatic cycle after F9: start cast, hit timing, wait, hook and reel.
+  # Set false only when the first cast must remain manual.
+  auto_cast: true
+  # Если Space не открыл полосу тайминга, сделать не больше трёх попыток.
+  # После лимита — безопасная пауза. Возобновление по F9 не двигает
+  # персонажа и ждёт настоящую стартовую подсказку с порогом 0.90.
+  cast_start_max_attempts: 3
+  cast_start_retry_delay_sec: 1.0
+  cast_settle_ms: 300
+  # GTA keeps the completed timing bar on screen for about 0.7-1.0 seconds.
+  # Ignore that old bar while bite detection is already running; if the hit
+  # really failed, the still-live bar will be checked again after this grace.
+  post_timing_grace_ms: 1200
+  bite_timeout_sec: 35
+  # Start accepting a confirmed bite one second after the timing press.
+  min_bite_delay_sec: 1.0
+  baseline_settle_sec: 1.0
+  # The bite prompt stays visible for seconds; two frames reject a one-frame
+  # lighting/template spike without adding a meaningful hook delay.
+  bite_confirm_frames: 2
+  bite_debug_interval_sec: 2
+  timing_debug_interval_sec: 0.25
+  hook_delay_ms: [0, 10]
+  # Settle delay right before clicking "keep" — the modal/button can still be
+  # mid-animation the instant it's first detected as visible.
+  keep_click_delay_ms: 200
+  # Settle delay after clicking "keep", before restarting the cast cycle —
+  # gives the "kept fish" UI time to fully close first.
+  after_collect_ms: 700
+  # После конца вываживания — сколько ждать окно «ВЫ ПОЙМАЛИ РЫБУ»
+  # (иногда появляется с задержкой 1-2с после исчезновения полосы A/D).
+  reel_modal_wait_sec: 5.0
+  cast_key: space
+  hook_keys: [space]
+  hook_trigger: bite_text
+
+fishing_setup:
+  start_template: start_fishing_prompt.png
+  equipment_template: equipment_ready_prompt.png
+  # Стартовая плашка полупрозрачная: сравниваем только белый текст и клавишу E,
+  # чтобы дневной/ночной фон не влиял и чужие подсказки E не проходили порог.
+  start_foreground_min_gray: 215
+  start_foreground_match_threshold: 0.90
+  equipment_match_threshold: 0.76
+
+telemetry:
+  enabled: true
+  directory: logs/fishing_sessions
+  sample_interval_sec: 2.0
+
+cast_timing:
+  locate_green:
+    low: [30, 40, 40]
+    high: [100, 255, 255]
+  zone_green:
+    low: [40, 100, 100]
+    high: [85, 255, 255]
+  slider_gray_min: 200
+  # 0 = Space жмётся в любой точке зелёной зоны (а не только в центре)
+  zone_edge_margin_px: 0
+  # компенсация задержки кадр→нажатие: целимся туда, где слайдер БУДЕТ
+  press_lead_ms: 80
+  # жмём только в центральной части зоны (0.2 = отрезаем по 20% с краёв)
+  zone_press_band_frac: 0.20
+  timeout_sec: 6
+  appear_timeout_sec: 3.0
+  poll_ms: 4
+  tick_ms: 2
+  press_keys: [space]
+
+reel:
+  yellow_low: [10, 80, 100]
+  yellow_high: [40, 255, 255]
+  yellow_ratio_min: 0.01
+  fish_icon_gray_min: 70
+  # Высокая зона: в финале вываживания иконка поднимается почти к верху экрана
+  # (y≈0.10 перед самой поимкой) — короткая зона теряла её, и бот бросал
+  # выигрываемый бой.
+  marker_roi_pct: [0.30, 0.06, 0.40, 0.56]
+  reel_prompt_white_min: 0.028
+  # Сколько подряд «неактивных» кадров считать концом боя. В начале боя
+  # (prog≈0.03) детекция иногда мигает на 1-2 кадра — 18 кадров (~2-4с при
+  # реальном темпе цикла) даёт запас от ложного завершения, а после
+  # настоящего схода лишь чуть задерживает перезаброс.
+  inactive_frames_to_finish: 18
+  # Сколько ждать появления полосы/маркера вываживания после подсечки, прежде
+  # чем считать, что рыба сорвалась и сразу решать "готово" (раньше это было
+  # 12 тиков * 8мс = ~96мс, чего не хватало, если миниигра появляется не сразу
+  # — бот считал рыбу пойманной, даже не начав держать A/D).
+  appear_timeout_sec: 5.0
+  # На реальной записи бой с крупной рыбой упёрся в таймаут 55с при прогрессе
+  # 0.81 — рыба была почти выловлена. Запас нужен большой: сам бой кончается
+  # раньше сам по себе (ui_gone/модалка), таймаут — только страховка.
+  timeout_sec: 120
+  tick_ms: 8
+  # Steering signal: the fish/bobber icon barely moves — what actually shows
+  # "which way the fish pulls" is the game CAMERA panning left/right (confirmed
+  # via background-vs-HUD shift measurement on a real recording: HUD ~0px,
+  # background ~20px per 0.5s). We track the background ROI below with phase
+  # correlation instead of any icon position.
+  # [x_pct, y_pct, w_pct, h_pct] — upper-middle area (rocks/sky/water horizon),
+  # avoiding the chat log (top-left), player count (top-right) and bottom HUD.
+  pan_roi_pct: [0.31, 0.05, 0.42, 0.23]
+  # Minimum time between two pan measurements — too short a gap gives a weak,
+  # noisy shift signal; ~150ms gave a clean, strong signal in testing.
+  pan_min_dt_sec: 0.15
+  # phaseCorrelate confidence (0-1) below which a reading is discarded as noise
+  # (e.g. low-texture background, brief occlusion by the player/rod).
+  pan_min_response: 0.20
+  # px/sec of background shift before we actually steer — scaled by frame
+  # width/1920. Real panning measured ~40-45px/sec; keep comfortably below that.
+  pan_velocity_min_px_sec: 30.0
+  # Flip if A/D end up backwards in practice — quicker than re-deriving the sign
+  # convention from a new recording.
+  invert_pan_steer: false
+
+  # Полосу ищем ПО СОДЕРЖИМОМУ, а не по фиксированному региону: ряд полосы
+  # зависит от размера окна (окно 1920x1040 против фуллскрина сдвигало её на
+  # ~60px, и фиксированный регион резал полосу — бот бросил живой бой на 0.73).
+  # Заливка всегда начинается у левого края полосы (x≈0.356 ширины кадра) —
+  # узкая колонка там светится при любом прогрессе. Жёлтый цвет (hue 10-40)
+  # в найденном ряду = бой идёт; у таймбара зона чисто зелёная — жёлтого нет.
+  progress_hue_low: 10
+  progress_hue_high: 90
+  # Search only around the real bar row, then require a long contiguous
+  # horizontal fill. This rejects yellow/green rocks and water that previously
+  # kept an already-ended fight alive until the 120s hard timeout.
+  fill_y0_pct: 0.76
+  fill_y1_pct: 0.88
+  fill_min_run_pct: 0.075
+
+  # --- Тихий флип: рыба меняет сторону БЕЗ движения камеры ---
+  # На реальных срывах: пан молчит, иконка зелёная (обычная борьба, не рывок),
+  # а прогресс устойчиво сливается 0.5→0.2 за ~15с, пока держится устаревшая
+  # клавиша. Если за окно quiet_flip_window_sec прогресс упал на
+  # quiet_flip_drop (сильно выше шума ±0.01) — перекладываем клавишу один раз.
+  # Пан всегда главнее: любое реальное показание пана сбрасывает этот счётчик.
+  # При белой иконке (рывок) флип выключен — там слив идёт при любых клавишах.
+  quiet_flip_window_sec: 2.0
+  quiet_flip_drop: 0.05
+
+prompt:
+  hook_prompt_white_min: 0.035
+  hook_match_threshold: 0.80
+  hook_delta_min: 0.35
+  # Night bites score 0.81-0.90, but real daylight bites in sessions
+  # 20260810_115046..120544 scored only 0.61-0.68 because the translucent prompt
+  # background changes with the scene. False desktop/control-panel matches
+  # topped out at 0.59. This threshold is additionally guarded by text_delta,
+  # min_bite_delay_sec and two-frame confirmation.
+  bite_text_threshold: 0.60
+  bite_absolute_threshold: 0.72
+  text_delta_min: 0.10
+  bobber_change_min: 0.055
+  bobber_bite_threshold: 0.70
+  match_threshold: 0.85
+  bite_margin: 0.003
+  bite_keyword_threshold: 0.72
+  # Порог «Дождитесь…»-текста. Раньше код молча ограничивал это значение
+  # сверху до 0.45 — теперь ручка честная; 0.45 сохраняет прежнее поведение.
+  wait_match_floor: 0.45
+
+catch_modal:
+  match_threshold: 0.85
+
+hotkeys:
+  toggle: f9
+  stop: f10
+  record_toggle: f11
+
+debug:
+  enabled: true
+  # Сохраняются только полезные ROI, сжатые в JPEG и ограниченные на сессию.
+  save_screenshots: true
+  screenshot_format: jpg
+  screenshot_quality: 82
+  screenshot_max_per_session: 120
+  screenshot_max_per_tag: 30
+  show_overlay: false
+  live_window: false
+  # При false полностью отключены live overlay, timing_bar_live и reel_live.
+  overlay_interval_sec: 0.5
+
+routes:
+  directory: config/routes
+
+navigation:
+  enabled: false
+  mode: routes
+  routes:
+    to_spot: fish_to_spot
+    to_sell: fish_to_sell
+    after_sell: sell_to_spot
+
+# minigame_only — вы сами забрасываете (Enter), бот ловит тайминг/подсекает/вываживает/забирает
+# cast_and_reel — полный цикл на месте
+mode: cast_and_reel

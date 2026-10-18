@@ -1,0 +1,9 @@
+mss>=9.0.0
+opencv-python>=4.8.0
+pydirectinput>=1.0.4
+pynput>=1.7.6
+pyyaml>=6.0.1
+numpy>=1.24.0
+pygetwindow>=0.0.9
+PySide6>=6.8.0
+Pillow>=10.0.0

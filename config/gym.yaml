@@ -1,0 +1,45 @@
+screen:
+  resolution: [1920, 1080]
+  # На этой конфигурации Win32 возвращает DPI-виртуализированный размер окна
+  # GTA, а mss работает в физических координатах. Из-за двойного масштаба
+  # прежняя ROI попадала в штангу вместо нижнего значка.
+  force_monitor: true
+  monitor_index: 1
+  window_titles:
+    - "Grand Theft Auto V"
+    - "GTA5"
+    - "Majestic"
+  process_names:
+    - "GTA5"
+    - "PlayGTAV"
+    - "RAGEMP"
+
+regions:
+  # Белый круг с буквой внизу экрана.
+  prompt: [904, 946, 114, 114]
+
+gym:
+  keys: [w, d, s, a]
+  templates_dir: "config/templates/gym"
+  start_key: e
+  start_settle_sec: 0.45
+  # Между отдельными капчами одного подхода бывает пауза 2.5–5.5 секунды.
+  # Короткий таймаут ошибочно начинал новый цикл с E уже после первой буквы.
+  start_retry_sec: 2.0
+  restart_after_absent_sec: 2.0
+  confirm_frames: 2
+  release_confirm_frames: 2
+  retry_same_key_sec: 0.70
+  reaction_delay_ms: [45, 85]
+  key_hold_sec: 0.055
+  min_match_score: 0.78
+  min_match_margin: 0.10
+  min_circle_brightness_ratio: 0.35
+
+hotkeys:
+  toggle: f9
+  stop: f10
+
+debug:
+  enabled: true
+  save_live_crop: true

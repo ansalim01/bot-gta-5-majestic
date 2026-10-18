@@ -1,0 +1,101 @@
+screen:
+  resolution: [1920, 1080]
+  window_titles:
+    - "Grand Theft Auto V"
+    - "GTA5"
+    - "Majestic"
+
+regions:
+  notification: [20, 20, 400, 120]
+  minigame: [520, 340, 880, 420]
+  minigame_progress: [700, 680, 520, 60]
+  rocks_mask: [580, 360, 760, 280]
+  carry_indicator: [20, 140, 400, 80]
+  minimap: [0, 780, 300, 300]
+  carry_banner: [550, 990, 820, 70]
+  mining_hud: [1550, 900, 350, 140]
+
+mining:
+  lmb_interval_ms: [35, 70]
+  lmb_random_ms: [5, 25]
+
+minigame:
+  use_templates: false
+  match_threshold: 0.88
+  color_detection: true
+  use_rocks_mask: true
+  use_auto_rock_mask: true
+  click_delay_ms: [100, 180]
+  post_click_wait_ms: 200
+  timeout_sec: 12
+  min_vein_area: 12
+  max_vein_area: 300
+  max_clicks_per_minigame: 8
+  min_progress_to_finish: 0.92
+  click_cooldown_radius: 55
+  vein_hsv:
+    yellow_low: [12, 45, 125]
+    yellow_high: [42, 255, 255]
+    white_low: [0, 0, 200]
+    white_high: [180, 70, 255]
+  vein_hsv_relaxed:
+    yellow_low: [10, 30, 110]
+    yellow_high: [45, 255, 255]
+    white_low: [0, 0, 175]
+    white_high: [180, 90, 255]
+  rock_dark_threshold: 85
+  progress_fill_threshold: 0.92
+  empty_frames_to_finish: 8
+  final_sweep_attempts: 4
+  dedupe_distance: 32
+  progress_white_threshold: 0.08
+
+notification:
+  brightness_threshold: 40
+  match_threshold: 0.75
+  drop_match_threshold: 0.75
+  mine_match_threshold: 0.75
+  roi_correlation_min: 0.75
+  roi_correlation_margin: 0.18
+  debounce_sec: 2.0
+
+carry:
+  match_threshold: 0.75
+  brightness_threshold: 35
+
+hotkeys:
+  toggle: f9
+  stop: f10
+  record_toggle: f11   # запись маршрута (tools/record_route.py)
+
+debug:
+  enabled: true
+  save_screenshots: true
+  # true = пишет logs/debug/live_debug.png (без окна OpenCV, иначе рекурсия в захвате)
+  show_overlay: true
+
+routes:
+  directory: config/routes
+
+navigation:
+  enabled: true
+  # routes — записанный путь (W+мышь). minimap — старый режим по радару
+  mode: routes
+  routes:
+    to_rock: fork_tunnel2      # развилка → камень (2-й туннель)
+    to_drop: mine_to_drop      # камень → куча
+    after_drop: drop_to_fork   # куча → развилка
+  # to_rock: fork_tunnel1     # если идёте в 1-й туннель (Nickel)
+
+carry_banner:
+  match_threshold: 0.88
+
+mine_phase:
+  minigame_pink_ratio: 0.08
+  mining_white_ratio: 0.008
+  mining_blue_ratio: 0.006
+
+# minigame_only — вы сами бегаете и жмёте ЛКМ, бот только кликает жилы в мини-игре
+# walk_minigame — бот бегает по миникарте, вы жмёте ЛКМ у камня
+# full — полная автоматизация (навигация, ЛКМ, E, маршруты)
+mode: full
